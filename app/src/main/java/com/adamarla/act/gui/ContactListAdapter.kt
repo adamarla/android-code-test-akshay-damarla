@@ -1,4 +1,4 @@
-package gui
+package com.adamarla.act.gui
 
 import android.content.Context
 import android.content.Intent
@@ -7,9 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.adamarla.act.ACTAD
 import com.adamarla.act.R
+import com.adamarla.act.activity.ListContacts
 import com.adamarla.act.activity.ManageContact
-import data.Contact
+import com.adamarla.act.data.Contact
+import com.adamarla.act.data.ContactDetail
+import com.adamarla.act.data.ContactDetail_
+import io.objectbox.Box
 
 
 /**
@@ -19,11 +24,20 @@ import data.Contact
 class ContactListAdapter(val context: Context, var contacts: List<Contact>):
         RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
 
+    lateinit var detailsBox: Box<ContactDetail>
+
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView){
         init {
             itemView?.setOnClickListener { _ ->
+                val selectedContact = contacts[adapterPosition]
+
+                detailsBox = ((context as ListContacts).application as ACTAD).boxStore.boxFor(ContactDetail::class.java)
+                val allDetailsQuery = detailsBox.query().equal(ContactDetail_.contactId, selectedContact.id).build()
+                selectedContact.contactDetails.clear()
+                selectedContact.contactDetails.addAll(allDetailsQuery.find())
+
                 val intent = Intent(context, ManageContact::class.java)
-                intent.putExtra("contact", contacts[adapterPosition])
+                intent.putExtra("contact", selectedContact)
                 context.startActivity(intent)
             }
         }
@@ -40,7 +54,7 @@ class ContactListAdapter(val context: Context, var contacts: List<Contact>):
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val contact = contacts[position]
         holder!!.tvHeadline.text = "${contact.firstName} ${contact.lastName}"
-        holder!!.tvBlurb.text = contact.dob.toString()
+        holder.tvBlurb.text = contact.dob.toString()
     }
 
     override fun getItemCount(): Int = contacts.size

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include android:id="@+id/etFirstName"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etLastName"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etDob"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etLine"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etCity"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etState"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etZip"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etEmail"
+        android:visibility="gone" layout="@layout/edit_text" />
+    <include android:id="@+id/etPhone"
+        android:visibility="gone" layout="@layout/edit_text" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:drawableStart="@android:drawable/ic_menu_save"
+            android:text="Save"/>
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:drawableStart="@android:drawable/ic_menu_delete"
+            android:text="Delete"/>
+
+    </LinearLayout>
+
+</LinearLayout>
