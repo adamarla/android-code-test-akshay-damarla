@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,5 +21,35 @@
             android:padding="@dimen/small_margin" />
 
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin_small"
+            app:srcCompat="@mipmap/ic_call" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin_small"
+            app:srcCompat="@mipmap/ic_email" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabAddMail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin_small"
+            app:srcCompat="@mipmap/ic_home" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

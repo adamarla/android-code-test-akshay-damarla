@@ -1,6 +1,7 @@
 package com.adamarla.act.gui
 
 import android.app.DialogFragment
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,20 +21,19 @@ import com.adamarla.act.data.DetailType
  * Created by adamarla on 9/24/17.
  */
 
-class EditItemDialog(): DialogFragment() {
-
-    private lateinit var item: ContactDetail
-    private lateinit var host: EditDialogHost
-    private lateinit var editFields: List<Triple<Int, String, String>>
-
-    constructor(item: ContactDetail, host: EditDialogHost): this() {
-        this.item = item
-        this.host = host
-    }
+class EditItemDialog(private val item: ContactDetail = ContactDetail(detailType = DetailType.Phone),
+                     private val host: EditDialogHost? = null,
+                     private val allowDelete: Boolean = false): DialogFragment() {
 
     interface EditDialogHost {
-        fun onSave(data: String)
+        fun onSave(data: String, detailType: DetailType)
         fun onDelete()
+        fun onDismiss()
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+        host!!.onDismiss()
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
@@ -44,38 +44,17 @@ class EditItemDialog(): DialogFragment() {
         listOf(R.id.btnSave, R.id.btnDelete).map {
             (view.findViewById(it) as Button).setOnClickListener { view ->
                 if (view.id == R.id.btnSave)
-                    host.onSave(getTexts())
+                    host!!.onSave(getTexts(getEditFields(item)), item.detailType)
                 else
-                    host.onDelete()
+                    host!!.onDelete()
                 dialog.dismiss()
             }
         }
 
-        editFields = when (item.detailType) {
-            DetailType.Address -> {
-                val tokens = item.data.split(",").map { it.trim() }
-                listOf(Triple(R.id.etLine, "Street", tokens[0]),
-                        Triple(R.id.etCity, "City", tokens[1]),
-                        Triple(R.id.etState, "State", tokens[2]),
-                        Triple(R.id.etZip, "Zip", tokens[3]))
-            }
-            DetailType.Email -> {
-                listOf(Triple(R.id.etEmail, "Email", item.data))
-            }
-            DetailType.Phone -> {
-                listOf(Triple(R.id.etPhone, "Phone (+1234567890)", item.data))
-            }
-            else -> {
-                val tokens = item.data.split(",")
-                listOf(Triple(R.id.etFirstName, "First Name", tokens[0]),
-                        Triple(R.id.etLastName, "Last Name", tokens[1]),
-                        Triple(R.id.etDob, "Date of Birth", tokens[2]),
-                        Triple(R.id.etPhone, "Phone", tokens[3]),
-                        Triple(R.id.etEmail, "Email", tokens[4]))
-            }
-        }
+        if (!allowDelete)
+            view.findViewById(R.id.btnDelete).visibility = View.GONE
 
-        editFields.map { setTexts(view, it) }
+        setTexts(view, getEditFields(item))
         return view
     }
 
@@ -87,15 +66,40 @@ class EditItemDialog(): DialogFragment() {
         dialog.window.setLayout(MATCH_PARENT, WRAP_CONTENT)
     }
 
-    private fun setTexts(dialog: View, fieldInfo: Triple<Int, String, String>) {
-        val editText = dialog.findViewById(fieldInfo.first) as EditText
-        editText.setText(fieldInfo.third, TextView.BufferType.EDITABLE)
-        editText.hint = fieldInfo.second
-        editText.visibility = View.VISIBLE
+    private val setTexts = { dialog: View, editFields: List<FieldInfo> ->
+        editFields.map { editField ->
+            val editText = dialog.findViewById(editField.id) as EditText
+            editText.setText(editField.text, TextView.BufferType.EDITABLE)
+            editText.hint = editField.hint
+            editText.visibility = View.VISIBLE
+        }
     }
 
-    private fun getTexts() = editFields.map { editField ->
-        (dialog.findViewById(editField.first) as EditText).text.toString()
-    }.joinToString(separator = ",")
+    private val getTexts = { editFields: List<FieldInfo> ->
+        editFields.map { editField ->
+            (dialog.findViewById(editField.id) as EditText).text.toString()
+        }.joinToString(separator = ",")
+    }
 
+    private val getEditFields = { editItem: ContactDetail ->
+        val tokens = editItem.data.split(",").map { it.trim().replace(Regex("^0$"), "") }
+        when (editItem.detailType) {
+            DetailType.Address -> listOf(FieldInfo(R.id.etLine, "Street", tokens[0]),
+                    FieldInfo(R.id.etCity, "City", tokens[1]),
+                    FieldInfo(R.id.etState, "State", tokens[2]),
+                    FieldInfo(R.id.etZip, "Zip", tokens[3]))
+            DetailType.Email -> listOf(FieldInfo(R.id.etEmail, "Email", tokens[0]))
+            DetailType.Phone -> listOf(FieldInfo(R.id.etPhone, "Phone", tokens[0]))
+            DetailType.Profile -> listOf(FieldInfo(R.id.etFirstName, "First Name", tokens[0]),
+                    FieldInfo(R.id.etLastName, "Last Name", tokens[1]),
+                    FieldInfo(R.id.etDob, "Date of Birth", tokens[2]))
+            else ->listOf(FieldInfo(R.id.etFirstName, "First Name", tokens[0]),
+                    FieldInfo(R.id.etLastName, "Last Name", tokens[1]),
+                    FieldInfo(R.id.etDob, "Date of Birth (YYYYMMDD)", tokens[2]),
+                    FieldInfo(R.id.etPhone, "Phone", tokens[3]),
+                    FieldInfo(R.id.etEmail, "Email", tokens[4]))
+        }
+    }
 }
+
+data class FieldInfo(val id: Int, val hint: String, val text: String)
