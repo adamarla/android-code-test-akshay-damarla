@@ -49,7 +49,7 @@ class ListContacts : AppCompatActivity() {
         contactsBox = (application as ACTAD).boxStore.boxFor(Contact::class.java)
 
         val contacts = contactsBox.query().build().find()
-        val adapter = ContactListAdapter(this, contacts.sortedBy { it.fullName })
+        val adapter = ContactListAdapter(this, contacts)
         recyclerView.adapter = adapter
 
         val fab = findViewById(R.id.fab) as FloatingActionButton?

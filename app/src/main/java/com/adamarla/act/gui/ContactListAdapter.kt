@@ -3,7 +3,6 @@ package com.adamarla.act.gui
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,12 +23,14 @@ import io.objectbox.Box
 
 class ContactListAdapter(val context: Context, var contacts: List<Contact>):
         RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
+    init {
+        contacts = contacts.sortedBy { it.fullName }
+    }
 
     var detailsBox: Box<ContactDetail>
 
     fun updateContacts(contacts: List<Contact>) {
         this.contacts = contacts
-        Log.d("adamarla", this.contacts[0].firstName)
         notifyDataSetChanged()
     }
 
