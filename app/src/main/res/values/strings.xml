@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Android Code Test Akshay Damarla</string>
     <string name="title_activity_contact_list">Contacts</string>
+    <string name="filter_hint">type here to filter...</string>
 </resources>
