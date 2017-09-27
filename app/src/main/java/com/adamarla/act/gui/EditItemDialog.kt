@@ -92,7 +92,7 @@ class EditItemDialog(private val item: ContactDetail = ContactDetail(detailType 
             DetailType.Phone -> listOf(FieldInfo(R.id.etPhone, "Phone", tokens[0]))
             DetailType.Profile -> listOf(FieldInfo(R.id.etFirstName, "First Name", tokens[0]),
                     FieldInfo(R.id.etLastName, "Last Name", tokens[1]),
-                    FieldInfo(R.id.etDob, "Date of Birth", tokens[2]))
+                    FieldInfo(R.id.etDob, "Date of Birth (YYYYMMDD)", tokens[2]))
             else ->listOf(FieldInfo(R.id.etFirstName, "First Name", tokens[0]),
                     FieldInfo(R.id.etLastName, "Last Name", tokens[1]),
                     FieldInfo(R.id.etDob, "Date of Birth (YYYYMMDD)", tokens[2]),
